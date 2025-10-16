@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+    id "edu.wpi.first.GradleRIO" version "2025.3.2"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+group = 'org.frc3767'
+version = 'unspecified'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'edu.wpi.first.wpiutil:wpiutil-java:2025.3.2'
+    implementation 'edu.wpi.first.wpilibj:wpilibj-java:2025.3.2'
+    implementation 'edu.wpi.first.wpilibNewCommands:wpilibNewCommands-java:2025.3.2'
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'com.squareup:javapoet:1.13.0'
+}
+
+test {
+    useJUnitPlatform()
+}
