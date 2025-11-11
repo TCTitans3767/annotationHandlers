@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 
-public class TransitionAnnotationHandler extends AbstractProcessor {
+public class DriveAnnotationHandler extends AbstractProcessor {
     private static String getPackageName(Element e) {
         while (e != null) {
             if (e.getKind().equals(ElementKind.PACKAGE)) {
@@ -31,29 +31,29 @@ public class TransitionAnnotationHandler extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         Optional<? extends TypeElement> annotationOptional =
                 annotations.stream()
-                        .filter((te) -> te.getSimpleName().toString().equals("Transition"))
+                        .filter((te) -> te.getSimpleName().toString().equals("State"))
                         .findFirst();
 
         if (!annotationOptional.isPresent()) {
             return false;
         }
 
-        TypeSpec.Builder stateClass = TypeSpec.classBuilder("RobotTransitions").addModifiers(Modifier.PUBLIC);
-        MethodSpec.Builder stateInitializer = MethodSpec.methodBuilder("initTransitions").addModifiers(Modifier.PUBLIC, Modifier.STATIC);
+        TypeSpec.Builder stateClass = TypeSpec.classBuilder("DriveModes").addModifiers(Modifier.PUBLIC);
+        MethodSpec.Builder stateInitializer = MethodSpec.methodBuilder("initDriveModes").addModifiers(Modifier.PUBLIC, Modifier.STATIC);
 
         TypeElement annotation = annotationOptional.get();
         roundEnv.getElementsAnnotatedWith(annotation)
                 .forEach(
                         (element) -> {
-                            String robotModeName = element.getSimpleName().toString();
+                            String driveModeName = element.getSimpleName().toString();
                             String robotModePackage = getPackageName(element);
 
-                            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Found transition: " + robotModeName + " in package " + robotModePackage);
+                            processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Found drive mode: " + driveModeName + " in package " + robotModePackage);
 
-                            FieldSpec stateCommand = FieldSpec.builder(Command.class, Character.toLowerCase(robotModeName.charAt(0)) + robotModeName.substring(1), Modifier.PUBLIC, Modifier.STATIC).build();
-                            stateInitializer.addStatement("RobotTransitions.$N = new $T()", stateCommand, element.asType());
+                            FieldSpec driveModeCommand = FieldSpec.builder(Command.class, Character.toLowerCase(driveModeName.charAt(0)) + driveModeName.substring(1), Modifier.PUBLIC, Modifier.STATIC).build();
+                            stateInitializer.addStatement("DriveModes.$N = new $T()", driveModeCommand, element.asType());
 
-                            stateClass.addField(stateCommand);
+                            stateClass.addField(driveModeCommand);
                         }
                 );
 
@@ -77,6 +77,6 @@ public class TransitionAnnotationHandler extends AbstractProcessor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        return Set.of("ControlAnnotations.Transition");
+        return Set.of("ControlAnnotations.DriveMode");
     }
 }
