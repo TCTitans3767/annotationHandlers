@@ -31,7 +31,7 @@ public class DriveAnnotationHandler extends AbstractProcessor {
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         Optional<? extends TypeElement> annotationOptional =
                 annotations.stream()
-                        .filter((te) -> te.getSimpleName().toString().equals("State"))
+                        .filter((te) -> te.getSimpleName().toString().equals("DriveMode"))
                         .findFirst();
 
         if (!annotationOptional.isPresent()) {
