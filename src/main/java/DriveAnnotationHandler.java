@@ -38,8 +38,8 @@ public class DriveAnnotationHandler extends AbstractProcessor {
             return false;
         }
 
-        TypeSpec.Builder stateClass = TypeSpec.classBuilder("DriveModes").addModifiers(Modifier.PUBLIC);
-        MethodSpec.Builder stateInitializer = MethodSpec.methodBuilder("initDriveModes").addModifiers(Modifier.PUBLIC, Modifier.STATIC);
+        TypeSpec.Builder driveModeClass = TypeSpec.classBuilder("DriveModes").addModifiers(Modifier.PUBLIC);
+        MethodSpec.Builder driveModeInitializer = MethodSpec.methodBuilder("initDriveModes").addModifiers(Modifier.PUBLIC, Modifier.STATIC);
 
         TypeElement annotation = annotationOptional.get();
         roundEnv.getElementsAnnotatedWith(annotation)
@@ -51,15 +51,15 @@ public class DriveAnnotationHandler extends AbstractProcessor {
                             processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Found drive mode: " + driveModeName + " in package " + robotModePackage);
 
                             FieldSpec driveModeCommand = FieldSpec.builder(Command.class, Character.toLowerCase(driveModeName.charAt(0)) + driveModeName.substring(1), Modifier.PUBLIC, Modifier.STATIC).build();
-                            stateInitializer.addStatement("DriveModes.$N = new $T()", driveModeCommand, element.asType());
+                            driveModeInitializer.addStatement("DriveModes.$N = new $T()", driveModeCommand, element.asType());
 
-                            stateClass.addField(driveModeCommand);
+                            driveModeClass.addField(driveModeCommand);
                         }
                 );
 
-        stateClass.addMethod(stateInitializer.build());
+        driveModeClass.addMethod(driveModeInitializer.build());
 
-        JavaFile fileBuilder = JavaFile.builder("frc.robot.utils", stateClass.build()).build();
+        JavaFile fileBuilder = JavaFile.builder("frc.robot.utils", driveModeClass.build()).build();
 
         try {
             fileBuilder.writeTo(processingEnv.getFiler());
